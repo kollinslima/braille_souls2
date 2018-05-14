@@ -46,7 +46,6 @@ public class TouchScreenView_Test extends View {
     }
 
     //Desenha tela
-
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
