@@ -4,20 +4,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".MainActivity">
+    android:orientation="vertical">
 
-    <RelativeLayout
-        android:layout_gravity="center"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textColor="@android:color/black"
+            android:textSize="300dp" />
+
         <com.example.kollins.braille_souls2.custom_view.TouchScreenView
+            android:id="@+id/touchView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:rows="3"
             app:columns="2"/>
 
-    </RelativeLayout>
+    </FrameLayout>
 
 </LinearLayout>

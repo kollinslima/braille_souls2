@@ -14,28 +14,77 @@ import android.view.View;
 
 import com.example.kollins.braille_souls2.R;
 
-public class TouchScreenView extends View implements GestureDetector.OnGestureListener {
+import java.util.ArrayList;
+
+public class TouchScreenView extends View implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener {
+
+    SensiveAreaListener sensiveListener;
 
     private int rows, columns;
+    private int positionX, positionY;
     GestureDetector gestureDetector;
 
     private int screenWidth, screenHeight;
+    private int stepX, stepY;
+
+    private ArrayList<ArrayList<Integer>> sensitiveArea;
 
     public TouchScreenView(Context context) {
         super(context);
-        gestureDetector = new GestureDetector(context,this);
+        gestureDetector = new GestureDetector(context, this);
         rows = 1;
         columns = 1;
+        sensitiveArea = new ArrayList<>(1);
+        sensitiveArea.add(new ArrayList<Integer>(1));
+        sensitiveArea.get(0).add(0);
         setFocusable(true);
     }
 
     public TouchScreenView(Context context, AttributeSet attrs) {
         super(context, attrs);
         TypedArray arr = context.obtainStyledAttributes(attrs, R.styleable.TouchScreenView);
-        gestureDetector = new GestureDetector(context,this);
+        gestureDetector = new GestureDetector(context, this);
         rows = arr.getInteger(R.styleable.TouchScreenView_rows, 1);
         columns = arr.getInteger(R.styleable.TouchScreenView_columns, 1);
+
+        sensitiveArea = new ArrayList<>(rows);
+        for (int i = 0; i < rows; i++) {
+            sensitiveArea.add(new ArrayList<Integer>(columns));
+            for (int j = 0; j < columns; j++) {
+                sensitiveArea.get(i).add(0);
+            }
+        }
+
         setFocusable(true);
+    }
+
+    public int setSensitive(int row, int column) {
+        try {
+            sensitiveArea.get(row).set(column, 1);
+        } catch (IndexOutOfBoundsException e) {
+            return 1;
+        }
+        return 0;
+    }
+
+    public void cleanAllSensitive() {
+        for (ArrayList<Integer> a : sensitiveArea) {
+            for (int i = 0; i < a.size(); i++) {
+                a.set(i, 0);
+            }
+        }
+    }
+
+    public int getRows() {
+        return rows;
+    }
+
+    public int getColumns() {
+        return columns;
+    }
+
+    public void setSensiveAreaListener(SensiveAreaListener eventListener) {
+        sensiveListener = eventListener;
     }
 
 
@@ -45,6 +94,9 @@ public class TouchScreenView extends View implements GestureDetector.OnGestureLi
 
         this.screenWidth = w;
         this.screenHeight = h;
+
+        stepX = screenWidth / columns;
+        stepY = screenHeight / rows;
 
     }
 
@@ -57,22 +109,57 @@ public class TouchScreenView extends View implements GestureDetector.OnGestureLi
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        int newPositionX, newPositionY;
+
         gestureDetector.onTouchEvent(event);
 
-        switch (event.getAction()){
+        switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_MOVE:
 
-                Log.d("MOTION", "Estou em " + (int)(event.getX()/(screenWidth/columns)) + " " + (int)(event.getY()/(screenHeight/rows)));
+                newPositionX = (int) (event.getX() / stepX);
+                newPositionY = (int) (event.getY() / stepY);
+
+                if (positionX != newPositionX || positionY != newPositionY){
+                    sensiveListener.onChangeArea();
+                }
+
+                positionX = newPositionX;
+                positionY = newPositionY;
+
+                if (sensitiveArea.get(positionY).get(positionX) == 1) {
+                    if (sensiveListener != null)
+                        sensiveListener.onSensiveArea();
+                } else {
+                    if (sensiveListener != null)
+                        sensiveListener.onNonSensiveArea();
+                }
 
                 break;
+
+            case MotionEvent.ACTION_UP:
+                if (sensiveListener != null)
+                    sensiveListener.onNonSensiveArea();
+                break;
         }
+
+        switch(event.getAction() & MotionEvent.ACTION_MASK)
+        {
+            case MotionEvent.ACTION_POINTER_DOWN:
+                sensiveListener.onDoubleFingerTap();
+                Log.d("MOTION", "Pointer: " + event.getPointerCount());
+                Log.d("MOTION", "Pointer: " + event.getY(0));
+                Log.d("MOTION", "Pointer: " + event.getY(1));
+                break;
+
+        }
+
         return true;
     }
 
     @Override
     public boolean onDown(MotionEvent e) {
-        Log.d("MOTION", "onDown");
+        sensiveListener.onTap(e.getX(), e.getY());
         return false;
     }
 
@@ -95,12 +182,28 @@ public class TouchScreenView extends View implements GestureDetector.OnGestureLi
 
     @Override
     public void onLongPress(MotionEvent e) {
-        Log.d("MOTION", "onLongPress");
+        sensiveListener.onLongPress();
     }
 
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
         Log.d("MOTION", "onFling");
+        return false;
+    }
+
+    @Override
+    public boolean onSingleTapConfirmed(MotionEvent e) {
+        return false;
+    }
+
+    @Override
+    public boolean onDoubleTap(MotionEvent e) {
+        sensiveListener.onDoubleTap();
+        return true;
+    }
+
+    @Override
+    public boolean onDoubleTapEvent(MotionEvent e) {
         return false;
     }
 }
