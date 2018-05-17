@@ -36,7 +36,7 @@ public class LearnMode extends AppCompatActivity implements SensiveAreaListener 
         symbolIndex = -1;
 
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-        toneGen = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
+        toneGen = new ToneGenerator(AudioManager.STREAM_MUSIC, ToneGenerator.MAX_VOLUME);
 
         setUpNextSymbol();
     }
@@ -90,6 +90,12 @@ public class LearnMode extends AppCompatActivity implements SensiveAreaListener 
                 row += 1;
             }
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        vibrator.cancel();
     }
 
     @Override

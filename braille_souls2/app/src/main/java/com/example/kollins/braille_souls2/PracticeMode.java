@@ -1,8 +1,6 @@
 package com.example.kollins.braille_souls2;
 
 import android.content.Context;
-import android.media.AudioManager;
-import android.media.ToneGenerator;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
@@ -11,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.kollins.braille_souls2.custom_view.SensiveAreaListener;
 import com.example.kollins.braille_souls2.custom_view.TouchScreenView;
@@ -41,9 +40,10 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
         LONG_RIGHT_DOWN
     }
 
-    private static double SIN_30 = Math.sin(Math.toRadians(30));
-    private static double SIN_60 = Math.sin(Math.toRadians(60));
+    private static double SIN_15 = Math.sin(Math.toRadians(15));
+    private static double SIN_75 = Math.sin(Math.toRadians(75));
 
+    private final long VIBRATE_TIME = 500; //ms
     private static int TIME_ANSWER = 5000;//ms
     private Timer timer;
 
@@ -54,6 +54,7 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
     private ArrayList<Point> points;
     private int[][] braille_matrix;
     private int symbolIndex;
+    private Vibrator vibrator;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -65,13 +66,26 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
         touchView.setSensiveAreaListener(this);
         random = new Random();
 
+        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+
         timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerAnswer(), TIME_ANSWER, TIME_ANSWER);
 
         points = new ArrayList<>();
         braille_matrix = new int[3][2];
 
         setUpRandomSymbol();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        timer.scheduleAtFixedRate(new TimerAnswer(), TIME_ANSWER, TIME_ANSWER);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        timer.cancel();
     }
 
     private void setUpRandomSymbol() {
@@ -190,6 +204,56 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
                             posMatrixRow += 2;
                         }
                         break;
+                    case LONG_LEFT_UP:
+                        if (posMatrixColum == 0) {
+                            moveAllElementsRight();
+                        } else {
+                            posMatrixColum -= 1;
+                        }
+                        if (posMatrixRow == 0) {
+                            moveAllElementsDown();
+                            moveAllElementsDown();
+                        } else {
+                            posMatrixRow -= 1;
+                        }
+                        break;
+                    case LONG_RIGHT_UP:
+                        if (posMatrixColum == 1) {
+                            //Wrong Answer
+                        } else {
+                            posMatrixColum += 1;
+                        }
+                        if (posMatrixRow == 0) {
+                            moveAllElementsDown();
+                            moveAllElementsDown();
+                        } else {
+                            posMatrixRow -= 1;
+                        }
+                        break;
+                    case LONG_LEFT_DOWN:
+                        if (posMatrixColum == 0) {
+                            moveAllElementsRight();
+                        } else {
+                            posMatrixColum -= 1;
+                        }
+                        if (posMatrixRow == 2) {
+                            //Wrong Answer
+                        } else {
+                            posMatrixRow += 2;
+                        }
+                        break;
+                    case LONG_RIGHT_DOWN:
+                        if (posMatrixColum == 1) {
+                            //Wrong Answer
+                        } else {
+                            posMatrixColum += 1;
+                        }
+                        if (posMatrixRow == 2) {
+                            //Wrong Answer
+                        } else {
+                            posMatrixRow += 2;
+                        }
+                        break;
                     default:
                         break;
                 }
@@ -208,9 +272,9 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
 
     private void checkAnswer() {
 
-        for (int i = 0; i < 3; i++) {
-            Log.d("MATRIX", String.format("%d %d", braille_matrix[i][0], braille_matrix[i][1]));
-        }
+//        for (int i = 0; i < 3; i++) {
+//            Log.d("MATRIX", String.format("%d %d", braille_matrix[i][0], braille_matrix[i][1]));
+//        }
 
         String brailleAnswer = braille_database.get(symbolIndex).getBraille();
         int[][] matrixAnswer = new int[3][2];
@@ -236,47 +300,60 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
         //Convolution
         int auxNumDots = 0;
         for (int i = 0; i < 3; i++) {
-            isRight = true;
-            auxNumDots = 0;
-            for (int k = 0, m = i; m < 3; k++, m++) {
-                for (int l = 0; l < 2; l++) {
-                    Log.d("Convol", "Answer: " + matrixAnswer[m][l]);
-                    Log.d("Convol", "My: " + braille_matrix[k][l]);
-                    if (matrixAnswer[m][l] != braille_matrix[k][l]) {
-                        isRight = false;
-                    } else if (matrixAnswer[m][l] == 1) {
-                        auxNumDots += 1;
+            for (int j = 0; j < 2; j++) {
+                isRight = true;
+                auxNumDots = 0;
+                for (int k = 0, m = i; m < 3; k++, m++) {
+                    for (int l = 0, n = j; n < 2; l++, n++) {
+                        Log.d("Convol", "Answer: " + matrixAnswer[m][l]);
+                        Log.d("Convol", "My: " + braille_matrix[k][l]);
+                        if (matrixAnswer[m][n] != braille_matrix[k][l]) {
+                            isRight = false;
+                        } else if (matrixAnswer[m][l] == 1) {
+                            auxNumDots += 1;
+                        }
                     }
                 }
+                Log.d("Convol", "Result: " + isRight);
+                Log.d("Convol", "AuxDots: " + auxNumDots);
+                Log.d("Convol", "Next Convol");
+                if (isRight && (auxNumDots == numDots)) {
+                    break;
+                }
+
             }
-            Log.d("Convol", "Result: " + isRight);
-            Log.d("Convol", "AuxDots: " + auxNumDots);
-            Log.d("Convol", "Next Convol");
+
             if (isRight && (auxNumDots == numDots)) {
                 break;
             }
-
         }
 
 
         if (isRight && (auxNumDots == numDots)) {
-            Log.d("Answer", "Correto");
+            Toast.makeText(this, "Right Answer", Toast.LENGTH_SHORT).show();
         } else {
-            Log.d("Answer", "Errado");
+            Toast.makeText(this, "Wrong Answer", Toast.LENGTH_SHORT).show();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                vibrator.vibrate(VibrationEffect.createOneShot(VIBRATE_TIME, VibrationEffect.DEFAULT_AMPLITUDE));
+            }else{
+                vibrator.vibrate(500);
+            }
         }
 
         setUpRandomSymbol();
     }
 
     private void moveAllElementsDown() {
-//        int[] aux = new int[2];
-//        for (int i = 0; i < 2; i++) {
-//            for (int j = 0; j < 2; j++) {
-//                aux[j] = braille_matrix[i + 1][j];
-//                braille_matrix[i + 1][j] = braille_matrix[i][j];
-//                braille_matrix[i][j] = 0;
-//            }
-//        }
+        int[] auxRow = new int[2];
+        int auxElement;
+
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 2; j++) {
+                auxElement = braille_matrix[i][j];
+                braille_matrix[i][j] = auxRow[j];
+                auxRow[j] = auxElement;
+            }
+        }
     }
 
     private void moveAllElementsRight() {
@@ -294,13 +371,13 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
 
         double sin = catY / hip;
 
-        if (sin < SIN_30) {
+        if (sin < SIN_15) {
             if ((p1.getPosX() - p2.getPosX()) < 0) {
                 return Direction.RIGHT;
             } else {
                 return Direction.LEFT;
             }
-        } else if (sin < SIN_60) {
+        } else if (sin < SIN_75) {
 
             float posX = p1.getPosX() - p2.getPosX();
             float posY = p1.getPosY() - p2.getPosY();
@@ -359,7 +436,7 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
 
     @Override
     public void onLongPress() {
-
+        finish();
     }
 
     @Override
