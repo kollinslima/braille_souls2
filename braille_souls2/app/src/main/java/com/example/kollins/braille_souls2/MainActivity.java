@@ -1,5 +1,6 @@
 package com.example.kollins.braille_souls2;
 
+import android.content.Intent;
 import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,7 +16,7 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements TextToSpeech.OnInitListener{
 
-    private TextToSpeech tts;
+    public static TextToSpeech tts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +29,8 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.game_menu, menu);
+
+        tts.speak(getResources().getString(R.string.wellcome_message), TextToSpeech.QUEUE_FLUSH, null);
         return true;
     }
 
@@ -35,8 +38,12 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
+            case R.id.goToMainMenu:
+                Intent intent = new Intent(this, MainMenu.class);
+                startActivity(intent);
+                return  true;
             case R.id.speakMenu:
-                helloTTS();
+                tts.speak(getResources().getString(R.string.tts_speak_menu), TextToSpeech.QUEUE_FLUSH, null);
                 return true;
             case R.id.exitMenu:
                 finish();
@@ -45,9 +52,8 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
         }
     }
 
-    private void helloTTS() {
-        tts.speak(getResources().getString(R.string.tts_speak_menu), TextToSpeech.QUEUE_FLUSH, null);
-        Toast.makeText(this, getResources().getString(R.string.speakMenuToast),Toast.LENGTH_SHORT).show();
+    public void TTSReader(String input){
+        tts.speak(input,TextToSpeech.QUEUE_FLUSH,null);
     }
 
     @Override
@@ -65,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     @Override
     public void onDestroy() {
         if(tts != null){
+            tts.speak("Shutting down Text To Speech engine", TextToSpeech.QUEUE_FLUSH, null);
             tts.stop();
             tts.shutdown();
         }

@@ -4,4 +4,7 @@
     <string name="exitMenu">Exit</string>
     <string name="speakMenuToast">Speak Touched</string>
     <string name="tts_speak_menu">Speak button pressed on inflated menu</string>
+    <string name="goToMainMenuMenu">Main Menu</string>
+    <string name="MainMenuInstructions">Use gestures here</string>
+    <string name="wellcome_message">Wellcome to Braille Souls Acessible Edition</string>
 </resources>

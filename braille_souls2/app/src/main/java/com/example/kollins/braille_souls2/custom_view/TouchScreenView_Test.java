@@ -6,10 +6,15 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.speech.tts.TextToSpeech;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.example.kollins.braille_souls2.MainActivity;
 import com.example.kollins.braille_souls2.R;
+import com.example.kollins.braille_souls2.TTSManager;
+
+import java.util.Locale;
 
 public class TouchScreenView_Test extends View {
 
@@ -18,6 +23,7 @@ public class TouchScreenView_Test extends View {
     private int x,y;
     private int larguraTela, alturaTela;
     private int larguraImg, alturaImg;
+
 
 
     public TouchScreenView_Test(Context context) {
@@ -75,6 +81,11 @@ public class TouchScreenView_Test extends View {
             case MotionEvent.ACTION_DOWN:
                 //Inicia movimento se pressionou imagem
                 selecionou = img.copyBounds().contains((int)x, (int)y);
+                if(selecionou){
+                    MainActivity.tts.speak("Ouch!!! too much pressure", TextToSpeech.QUEUE_ADD, null);
+                }else{
+                    MainActivity.tts.speak("Missed android", TextToSpeech.QUEUE_ADD, null);
+                }
                 break;
 
             case MotionEvent.ACTION_MOVE:
@@ -86,6 +97,9 @@ public class TouchScreenView_Test extends View {
                 break;
 
             case MotionEvent.ACTION_UP:
+                if(selecionou){
+                    MainActivity.tts.speak("Wow!!! What a relief", TextToSpeech.QUEUE_ADD, null);
+                }
                 //Finaliza movimento
                 selecionou = false;
                 break;
@@ -94,6 +108,9 @@ public class TouchScreenView_Test extends View {
         invalidate();
         return true;
     }
+
+
+
 
 
 }
