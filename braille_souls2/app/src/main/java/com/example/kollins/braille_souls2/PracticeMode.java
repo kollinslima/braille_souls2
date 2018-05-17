@@ -68,8 +68,6 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
 
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
-        timer = new Timer();
-
         points = new ArrayList<>();
         braille_matrix = new int[3][2];
 
@@ -79,6 +77,7 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
     @Override
     protected void onResume() {
         super.onResume();
+        timer = new Timer();
         timer.scheduleAtFixedRate(new TimerAnswer(), TIME_ANSWER, TIME_ANSWER);
     }
 
@@ -90,7 +89,10 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
 
     private void setUpRandomSymbol() {
         symbolIndex = random.nextInt(braille_database.size());
-        text.setText(braille_database.get(symbolIndex).getText());
+
+        String symbol = braille_database.get(symbolIndex).getText();
+        text.setText(symbol);
+        Log.d("Symbol", String.valueOf(text.getText()));
     }
 
     private void fitAnswer() {
@@ -98,12 +100,12 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
         Point p1, p2;
         int posMatrixRow, posMatrixColum;
 
+        clearBrailleMatrix();
+
         if (points.size() == 0) {
             //Wrong answer
         } else if (points.size() < 6) {
             p1 = points.get(0);
-
-            clearBrailleMatrix();
 
             posMatrixRow = 0;
             posMatrixColum = 0;
@@ -299,17 +301,18 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
         Log.d("Convol", "Dots: " + numDots);
         //Convolution
         int auxNumDots = 0;
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 2; j++) {
+        boolean continueConvol = true;
+        for (int i = 0; (i < 3) && continueConvol; i++) {
+            for (int j = 0; (j < 2) && continueConvol; j++) {
                 isRight = true;
                 auxNumDots = 0;
-                for (int k = 0, m = i; m < 3; k++, m++) {
-                    for (int l = 0, n = j; n < 2; l++, n++) {
-                        Log.d("Convol", "Answer: " + matrixAnswer[m][l]);
+                for (int k = 0, m = i; (m < 3) && isRight; k++, m++) {
+                    for (int l = 0, n = j; (n < 2) && isRight; l++, n++) {
+                        Log.d("Convol", "Answer: " + matrixAnswer[m][n]);
                         Log.d("Convol", "My: " + braille_matrix[k][l]);
                         if (matrixAnswer[m][n] != braille_matrix[k][l]) {
                             isRight = false;
-                        } else if (matrixAnswer[m][l] == 1) {
+                        } else if (matrixAnswer[m][n] == 1) {
                             auxNumDots += 1;
                         }
                     }
@@ -318,16 +321,13 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
                 Log.d("Convol", "AuxDots: " + auxNumDots);
                 Log.d("Convol", "Next Convol");
                 if (isRight && (auxNumDots == numDots)) {
-                    break;
+                    continueConvol = false;
                 }
 
             }
-
-            if (isRight && (auxNumDots == numDots)) {
-                break;
-            }
         }
 
+        Log.d("Convol", "End Convol");
 
         if (isRight && (auxNumDots == numDots)) {
             Toast.makeText(this, "Right Answer", Toast.LENGTH_SHORT).show();

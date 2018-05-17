@@ -20,11 +20,9 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".LearnMode"
-            android:screenOrientation="portrait"/>
+        <activity android:name=".LearnMode"/>
 
-        <activity android:name=".PracticeMode"
-            android:screenOrientation="portrait"/>
+        <activity android:name=".PracticeMode" />
     </application>
 
 </manifest>
