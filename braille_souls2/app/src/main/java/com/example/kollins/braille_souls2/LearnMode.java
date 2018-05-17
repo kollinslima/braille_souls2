@@ -126,4 +126,9 @@ public class LearnMode extends AppCompatActivity implements SensiveAreaListener 
         finish();
     }
 
+    @Override
+    public void onTap(float posX, float posY) {
+
+    }
+
 }

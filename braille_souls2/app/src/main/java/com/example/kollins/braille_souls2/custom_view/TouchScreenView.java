@@ -100,6 +100,10 @@ public class TouchScreenView extends View implements GestureDetector.OnGestureLi
 
     }
 
+    public int getScreenHeight(){
+        return screenHeight;
+    }
+
     //Desenha tela
 //    @Override
 //    protected void onDraw(Canvas canvas) {
@@ -159,8 +163,10 @@ public class TouchScreenView extends View implements GestureDetector.OnGestureLi
 
     @Override
     public boolean onDown(MotionEvent e) {
+        Log.d("MOTION", "X: " + e.getX());
+        Log.d("MOTION", "Y: " + e.getY());
         sensiveListener.onTap(e.getX(), e.getY());
-        return false;
+        return true;
     }
 
     @Override
