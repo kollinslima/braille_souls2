@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
+import android.speech.tts.TextToSpeech;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -17,6 +18,7 @@ public class TouchScreenView_Test extends View {
     private int x,y;
     private int larguraTela, alturaTela;
     private int larguraImg, alturaImg;
+
 
     public TouchScreenView_Test(Context context) {
         super(context);
@@ -92,4 +94,6 @@ public class TouchScreenView_Test extends View {
         invalidate();
         return true;
     }
+
+
 }

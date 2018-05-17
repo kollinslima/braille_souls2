@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">braille_souls2</string>
+    <string name="speakMenu">Speak</string>
+    <string name="exitMenu">Exit</string>
+    <string name="speakMenuToast">Speak Touched</string>
+    <string name="tts_speak_menu">Speak button pressed on inflated menu</string>
 </resources>
