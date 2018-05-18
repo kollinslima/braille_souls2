@@ -1,13 +1,21 @@
 package com.example.kollins.braille_souls2;
 
 import android.content.Context;
+import android.media.AudioManager;
+import android.media.ToneGenerator;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,6 +55,8 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
     private static int TIME_ANSWER = 5000;//ms
     private Timer timer;
 
+    private Handler handler;
+
     private TextView text;
     private TouchScreenView touchView;
     private Random random;
@@ -55,6 +65,8 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
     private int[][] braille_matrix;
     private int symbolIndex;
     private Vibrator vibrator;
+
+    private ToneGenerator toneGen;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -66,19 +78,19 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
         touchView.setSensiveAreaListener(this);
         random = new Random();
 
+        handler = new Handler(callback);
+
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        toneGen = new ToneGenerator(AudioManager.STREAM_MUSIC, ToneGenerator.MAX_VOLUME);
 
         points = new ArrayList<>();
         braille_matrix = new int[3][2];
-
-        setUpRandomSymbol();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerAnswer(), TIME_ANSWER, TIME_ANSWER);
+        setUpRandomSymbol();
     }
 
     @Override
@@ -92,7 +104,9 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
 
         String symbol = braille_database.get(symbolIndex).getText();
         text.setText(symbol);
-        Log.d("Symbol", String.valueOf(text.getText()));
+
+        timer = new Timer();
+        timer.schedule(new TimerAnswer(), TIME_ANSWER, TIME_ANSWER);
     }
 
     private void fitAnswer() {
@@ -102,9 +116,7 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
 
         clearBrailleMatrix();
 
-        if (points.size() == 0) {
-            //Wrong answer
-        } else if (points.size() < 6) {
+        if ((points.size() > 0) && (points.size() <= 6)) {
             p1 = points.get(0);
 
             posMatrixRow = 0;
@@ -123,9 +135,7 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
                         }
                         break;
                     case DOWN:
-                        if (posMatrixRow == 2) {
-                            //Wrong Answer
-                        } else {
+                        if (posMatrixRow < 2) {
                             posMatrixRow += 1;
                         }
                         break;
@@ -137,9 +147,7 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
                         }
                         break;
                     case RIGHT:
-                        if (posMatrixColum == 1) {
-                            //Wrong Answer
-                        } else {
+                        if (posMatrixColum < 1) {
                             posMatrixColum += 1;
                         }
                         break;
@@ -156,9 +164,7 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
                         }
                         break;
                     case RIGHT_UP:
-                        if (posMatrixColum == 1) {
-                            //Wrong Answer
-                        } else {
+                        if (posMatrixColum < 1) {
                             posMatrixColum += 1;
                         }
                         if (posMatrixRow == 0) {
@@ -173,21 +179,15 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
                         } else {
                             posMatrixColum -= 1;
                         }
-                        if (posMatrixRow == 2) {
-                            //Wrong Answer
-                        } else {
+                        if (posMatrixRow < 2) {
                             posMatrixRow += 1;
                         }
                         break;
                     case RIGHT_DOWN:
-                        if (posMatrixColum == 1) {
-                            //Wrong Answer
-                        } else {
+                        if (posMatrixColum < 1) {
                             posMatrixColum += 1;
                         }
-                        if (posMatrixRow == 2) {
-                            //Wrong Answer
-                        } else {
+                        if (posMatrixRow < 2) {
                             posMatrixRow += 1;
                         }
                         break;
@@ -200,10 +200,10 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
                         }
                         break;
                     case LONG_DOWN:
-                        if (posMatrixRow == 2) {
-                            //Wrong Answer
-                        } else {
+                        if (posMatrixRow == 0) {
                             posMatrixRow += 2;
+                        } else if (posMatrixRow < 2){
+                            posMatrixRow += 1;
                         }
                         break;
                     case LONG_LEFT_UP:
@@ -220,9 +220,7 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
                         }
                         break;
                     case LONG_RIGHT_UP:
-                        if (posMatrixColum == 1) {
-                            //Wrong Answer
-                        } else {
+                        if (posMatrixColum < 1) {
                             posMatrixColum += 1;
                         }
                         if (posMatrixRow == 0) {
@@ -238,22 +236,20 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
                         } else {
                             posMatrixColum -= 1;
                         }
-                        if (posMatrixRow == 2) {
-                            //Wrong Answer
-                        } else {
+                        if (posMatrixRow == 0) {
                             posMatrixRow += 2;
+                        } else if (posMatrixRow < 2){
+                            posMatrixRow += 1;
                         }
                         break;
                     case LONG_RIGHT_DOWN:
-                        if (posMatrixColum == 1) {
-                            //Wrong Answer
-                        } else {
+                        if (posMatrixColum < 1) {
                             posMatrixColum += 1;
                         }
-                        if (posMatrixRow == 2) {
-                            //Wrong Answer
-                        } else {
+                        if (posMatrixRow == 0) {
                             posMatrixRow += 2;
+                        } else if (posMatrixRow < 2){
+                            posMatrixRow += 1;
                         }
                         break;
                     default:
@@ -264,19 +260,19 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
                 p1 = p2;
             }
 
-        } else {
-            //Wrong answer
         }
 
-        checkAnswer();
         points.clear();
+
+        checkAnswer();
+        setUpRandomSymbol();
     }
 
     private void checkAnswer() {
 
-//        for (int i = 0; i < 3; i++) {
-//            Log.d("MATRIX", String.format("%d %d", braille_matrix[i][0], braille_matrix[i][1]));
-//        }
+        for (int i = 0; i < 3; i++) {
+            Log.d("MATRIX", String.format("%d %d", braille_matrix[i][0], braille_matrix[i][1]));
+        }
 
         String brailleAnswer = braille_database.get(symbolIndex).getBraille();
         int[][] matrixAnswer = new int[3][2];
@@ -331,6 +327,7 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
 
         if (isRight && (auxNumDots == numDots)) {
             Toast.makeText(this, "Right Answer", Toast.LENGTH_SHORT).show();
+            toneGen.startTone(ToneGenerator.TONE_CDMA_EMERGENCY_RINGBACK,200);
         } else {
             Toast.makeText(this, "Wrong Answer", Toast.LENGTH_SHORT).show();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -339,8 +336,6 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
                 vibrator.vibrate(500);
             }
         }
-
-        setUpRandomSymbol();
     }
 
     private void moveAllElementsDown() {
@@ -436,12 +431,14 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
 
     @Override
     public void onLongPress() {
-        finish();
+        points.remove(points.size()-1);
+        timer.cancel();
+        fitAnswer();
     }
 
     @Override
     public void onDoubleFingerTap() {
-
+        finish();
     }
 
     @Override
@@ -449,16 +446,18 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
         points.add(new Point(posX, posY));
     }
 
-    private class TimerAnswer extends TimerTask {
+    Handler.Callback callback = new Handler.Callback() {
+        public boolean handleMessage(Message msg) {
+            fitAnswer();
+            return true;
+        }
+    };
 
+    private class TimerAnswer extends TimerTask {
         @Override
         public void run() {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    fitAnswer();
-                }
-            });
+            handler.sendEmptyMessage(0);
+            timer.cancel();
         }
     }
 }

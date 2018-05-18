@@ -24,7 +24,7 @@ public class LearnMode extends AppCompatActivity implements SensiveAreaListener 
     private int symbolIndex;
     private Vibrator vibrator;
     private long[] pattern = {0, 100};
-    ToneGenerator toneGen;
+    private ToneGenerator toneGen;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
