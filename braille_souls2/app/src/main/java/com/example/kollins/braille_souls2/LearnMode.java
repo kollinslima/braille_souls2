@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.speech.tts.TextToSpeech;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
@@ -37,8 +38,11 @@ public class LearnMode extends AppCompatActivity implements SensiveAreaListener 
 
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         toneGen = new ToneGenerator(AudioManager.STREAM_MUSIC, ToneGenerator.MAX_VOLUME);
-
+        MainMenu.tts.speak(getResources().getString(R.string.tts_learn_mode_instructions), TextToSpeech.QUEUE_ADD, null);
+        MainMenu.tts.speak(getResources().getString(R.string.tts_learn_mode_touch_instructions), TextToSpeech.QUEUE_ADD, null);
+        MainMenu.tts.speak(getResources().getString(R.string.tts_lets_begin), TextToSpeech.QUEUE_ADD, null);
         setUpNextSymbol();
+
     }
 
     private void setUpNextSymbol(){
@@ -50,7 +54,8 @@ public class LearnMode extends AppCompatActivity implements SensiveAreaListener 
         }
 
         text.setText(braille_database.get(symbolIndex).getText());
-
+        String aux = getResources().getString(R.string.tts_spell_a_symbol) + braille_database.get(symbolIndex).getText();
+        MainMenu.tts.speak(aux, TextToSpeech.QUEUE_ADD, null);
         touchView.cleanAllSensitive();
 
         int i,row,column;
@@ -75,6 +80,8 @@ public class LearnMode extends AppCompatActivity implements SensiveAreaListener 
         }
 
         text.setText(braille_database.get(symbolIndex).getText());
+        String aux = getResources().getString(R.string.tts_spell_a_symbol) + braille_database.get(symbolIndex).getText();
+        MainMenu.tts.speak(aux, TextToSpeech.QUEUE_ADD, null);
 
         touchView.cleanAllSensitive();
 

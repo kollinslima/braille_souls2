@@ -3,4 +3,18 @@
     <string name="aprender">Aprender</string>
     <string name="praticar">Praticar</string>
     <string name="sair">Sair</string>
+    <string name="main_menu_learn">Learn</string>
+    <string name="main_menu_practice">Practice</string>
+    <string name="main_menu_exit">Exit</string>
+    <string name="tts_pausing_app">Pausing braille souls</string>
+    <string name="tts_select_learn_mode">Learn mode selected</string>
+    <string name="tts_select_exit">Exit selected</string>
+    <string name="tts_exiting_app">Exiting braille souls</string>
+    <string name="tts_select_practice_mode">Practice mode selected</string>
+    <string name="tts_main_menu_button_layout">There are three buttons on this screen, the upper half is the learn button, the lower left fourth is the practice button and the lower right fourth is the exit button</string>
+    <string name="tts_wellcome_message">Wellcome to braille souls accessible edition</string>
+    <string name="tts_learn_mode_instructions">Drag you finger through the screen, when it beeps means you are at a braille dot, if it also vibrate it means that the dot is active</string>
+    <string name="tts_spell_a_symbol">Thats the braille for: </string>
+    <string name="tts_learn_mode_touch_instructions">Double tap to go forward, long press to go backward, tap with two fingers to go the menu</string>
+    <string name="tts_lets_begin">Let\'s begin:</string>
 </resources>

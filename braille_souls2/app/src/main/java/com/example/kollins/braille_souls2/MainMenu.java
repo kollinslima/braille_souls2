@@ -22,8 +22,11 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.TestLooperManager;
+import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import com.example.kollins.braille_souls2.database.DBKey;
@@ -31,24 +34,31 @@ import com.example.sumi.brailler.database.DataBaseHelper;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
+import org.w3c.dom.Text;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 
-public class MainMenu extends AppCompatActivity {
+public class MainMenu extends AppCompatActivity implements TextToSpeech.OnInitListener{
 
 
     public static final String DATABASE_TAG = "DatabaseTest";
     public static final ArrayList<DBKey> braille_database = new ArrayList<>();
+    public static TextToSpeech tts;
+    private String lastBtnTouched;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        tts = new TextToSpeech(this, this);
+        Log.e("Log", "APP - Application started");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
 
         loadDataBase();
-
+        lastBtnTouched = "";
     }
 
     private void loadDataBase() {
@@ -89,16 +99,61 @@ public class MainMenu extends AppCompatActivity {
     }
 
     public void toLearnMode(View view) {
-        Intent intent = new Intent(this, LearnMode.class);
-        startActivity(intent);
+        Log.e("Log", "APP - Learn button selected");
+        if(lastBtnTouched != "learnMode"){
+            lastBtnTouched = "learnMode";
+            tts.speak(getResources().getString(R.string.tts_select_learn_mode), TextToSpeech.QUEUE_FLUSH, null);
+            return;
+        }else{
+            Intent intent = new Intent(this, LearnMode.class);
+            startActivity(intent);
+        }
     }
 
     public void toPracticeMode(View view) {
-        Intent intent = new Intent(this, PracticeMode.class);
-        startActivity(intent);
+        Log.e("Log", "APP - Practice button selected");
+        if(lastBtnTouched != "practiceMode"){
+            lastBtnTouched = "practiceMode";
+            tts.speak(getResources().getString(R.string.tts_select_practice_mode), TextToSpeech.QUEUE_FLUSH, null);
+        }else{
+            Intent intent = new Intent(this, PracticeMode.class);
+            startActivity(intent);
+        }
     }
 
     public void exitButton(View view) {
-        finish();
+        Log.e("Log", "APP - Exit button selected");
+        if(lastBtnTouched != "exitBtn"){
+            lastBtnTouched = "exitBtn";
+            tts.speak(getResources().getString(R.string.tts_select_exit), TextToSpeech.QUEUE_FLUSH, null);
+            return;
+        }else{
+            tts.speak(getResources().getString(R.string.tts_exiting_app), TextToSpeech.QUEUE_FLUSH, null);
+            finish();
+        }
     }
+
+    @Override
+    public void onInit(int status) {
+        if(status == TextToSpeech.SUCCESS){
+            int result = tts.setLanguage(Locale.US);
+            if(result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED){
+                Log.e("Log", "TTS - Language not supported");
+            }else{
+                Log.e("Log", "TTS - Initialize succeeded");
+                tts.speak(getResources().getString(R.string.tts_wellcome_message), TextToSpeech.QUEUE_FLUSH, null);
+                tts.speak(getResources().getString(R.string.tts_main_menu_button_layout), TextToSpeech.QUEUE_ADD, null);
+            }
+        }
+
+    }
+
+    @Override
+    public void onResume() {
+        lastBtnTouched = "";
+        tts.speak(getResources().getString(R.string.tts_main_menu_button_layout), TextToSpeech.QUEUE_FLUSH, null);
+        Log.e("Log", "APP - Resumed to main menu");
+        super.onResume();
+    }
+
 }
