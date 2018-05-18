@@ -445,14 +445,14 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
 
     @Override
     public void onLongPress() {
-        finish();
+        points.remove(points.size()-1);
+        timer.cancel();
+        fitAnswer();
     }
 
     @Override
     public void onDoubleFingerTap() {
-        points.remove(points.size()-1);
-        timer.cancel();
-        fitAnswer();
+        finish();
     }
 
     @Override
