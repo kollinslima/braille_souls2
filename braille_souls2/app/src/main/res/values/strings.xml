@@ -15,6 +15,6 @@
     <string name="tts_wellcome_message">Wellcome to braille souls accessible edition</string>
     <string name="tts_learn_mode_instructions">Drag you finger through the screen, when it beeps means you are at a braille dot, if it also vibrate it means that the dot is active</string>
     <string name="tts_spell_a_symbol">Thats the braille for: </string>
-    <string name="tts_learn_mode_touch_instructions">Double tap to go forward, long press to go backward, tap with two fingers to go the menu</string>
+    <string name="tts_learn_mode_touch_instructions">Double tap to go forward, long press to go backward, tap with two fingers to go back to the menu</string>
     <string name="tts_lets_begin">Let\'s begin:</string>
 </resources>
