@@ -1,6 +1,8 @@
 package com.example.kollins.braille_souls2;
 
 import android.content.Context;
+import android.media.AudioManager;
+import android.media.ToneGenerator;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -64,6 +66,8 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
     private int symbolIndex;
     private Vibrator vibrator;
 
+    private ToneGenerator toneGen;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +81,7 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
         handler = new Handler(callback);
 
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        toneGen = new ToneGenerator(AudioManager.STREAM_MUSIC, ToneGenerator.MAX_VOLUME);
 
         points = new ArrayList<>();
         braille_matrix = new int[3][2];
@@ -111,9 +116,7 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
 
         clearBrailleMatrix();
 
-        if (points.size() == 0) {
-            //Wrong answer
-        } else if (points.size() < 6) {
+        if ((points.size() > 0) && (points.size() <= 6)) {
             p1 = points.get(0);
 
             posMatrixRow = 0;
@@ -132,9 +135,7 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
                         }
                         break;
                     case DOWN:
-                        if (posMatrixRow == 2) {
-                            //Wrong Answer
-                        } else {
+                        if (posMatrixRow < 2) {
                             posMatrixRow += 1;
                         }
                         break;
@@ -146,9 +147,7 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
                         }
                         break;
                     case RIGHT:
-                        if (posMatrixColum == 1) {
-                            //Wrong Answer
-                        } else {
+                        if (posMatrixColum < 1) {
                             posMatrixColum += 1;
                         }
                         break;
@@ -165,9 +164,7 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
                         }
                         break;
                     case RIGHT_UP:
-                        if (posMatrixColum == 1) {
-                            //Wrong Answer
-                        } else {
+                        if (posMatrixColum < 1) {
                             posMatrixColum += 1;
                         }
                         if (posMatrixRow == 0) {
@@ -182,21 +179,15 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
                         } else {
                             posMatrixColum -= 1;
                         }
-                        if (posMatrixRow == 2) {
-                            //Wrong Answer
-                        } else {
+                        if (posMatrixRow < 2) {
                             posMatrixRow += 1;
                         }
                         break;
                     case RIGHT_DOWN:
-                        if (posMatrixColum == 1) {
-                            //Wrong Answer
-                        } else {
+                        if (posMatrixColum < 1) {
                             posMatrixColum += 1;
                         }
-                        if (posMatrixRow == 2) {
-                            //Wrong Answer
-                        } else {
+                        if (posMatrixRow < 2) {
                             posMatrixRow += 1;
                         }
                         break;
@@ -209,10 +200,10 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
                         }
                         break;
                     case LONG_DOWN:
-                        if (posMatrixRow == 2) {
-                            //Wrong Answer
-                        } else {
+                        if (posMatrixRow == 0) {
                             posMatrixRow += 2;
+                        } else if (posMatrixRow < 2){
+                            posMatrixRow += 1;
                         }
                         break;
                     case LONG_LEFT_UP:
@@ -229,9 +220,7 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
                         }
                         break;
                     case LONG_RIGHT_UP:
-                        if (posMatrixColum == 1) {
-                            //Wrong Answer
-                        } else {
+                        if (posMatrixColum < 1) {
                             posMatrixColum += 1;
                         }
                         if (posMatrixRow == 0) {
@@ -247,22 +236,20 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
                         } else {
                             posMatrixColum -= 1;
                         }
-                        if (posMatrixRow == 2) {
-                            //Wrong Answer
-                        } else {
+                        if (posMatrixRow == 0) {
                             posMatrixRow += 2;
+                        } else if (posMatrixRow < 2){
+                            posMatrixRow += 1;
                         }
                         break;
                     case LONG_RIGHT_DOWN:
-                        if (posMatrixColum == 1) {
-                            //Wrong Answer
-                        } else {
+                        if (posMatrixColum < 1) {
                             posMatrixColum += 1;
                         }
-                        if (posMatrixRow == 2) {
-                            //Wrong Answer
-                        } else {
+                        if (posMatrixRow == 0) {
                             posMatrixRow += 2;
+                        } else if (posMatrixRow < 2){
+                            posMatrixRow += 1;
                         }
                         break;
                     default:
@@ -273,8 +260,6 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
                 p1 = p2;
             }
 
-        } else {
-            //Wrong answer
         }
 
         points.clear();
@@ -342,6 +327,7 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
 
         if (isRight && (auxNumDots == numDots)) {
             Toast.makeText(this, "Right Answer", Toast.LENGTH_SHORT).show();
+            toneGen.startTone(ToneGenerator.TONE_CDMA_EMERGENCY_RINGBACK,200);
         } else {
             Toast.makeText(this, "Wrong Answer", Toast.LENGTH_SHORT).show();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
