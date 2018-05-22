@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.example.sumi.brailler.database;
+package com.example.kollins.braille_souls2.database;
 
 import android.content.Context;
 import android.database.SQLException;
@@ -36,7 +36,7 @@ import java.io.OutputStream;
 public class DataBaseHelper extends SQLiteOpenHelper {
     private static String DB_NAME = "braille_database";
     private static String DB_PATH = "";
-    private static final int DB_VERSION = 8;
+    private static final int DB_VERSION = 9;
 
     private SQLiteDatabase mDataBase;
     private final Context mContext;

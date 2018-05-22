@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Menu;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -116,7 +117,24 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
     @Override
     protected void onPause() {
         super.onPause();
-        timer.cancel();
+        try {
+            timer.cancel();
+        } catch (NullPointerException e){
+            Log.e("Timer", "Timer not running yet.",e);
+        }
+        MainMenu.tts.stop();
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        try {
+            timer.cancel();
+        } catch (NullPointerException e){
+            Log.e("Timer", "Timer not running yet.",e);
+        }
+        MainMenu.tts.stop();
     }
 
     private void setUpRandomSymbol() {
@@ -126,13 +144,13 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
         text.setText(symbol);
 
         speakText(symbol, TextToSpeech.QUEUE_ADD);
-        timer = new Timer();
 
         //Just waiting
         while(MainMenu.tts.isSpeaking()){
             Log.d("Speak", "I'm waiting...");
         }
 
+        timer = new Timer();
         timer.schedule(new TimerAnswer(), TIME_ANSWER, TIME_ANSWER);
     }
 
@@ -355,12 +373,12 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
         if (isRight && (auxNumDots == numDots)) {
             ph.addHit();
             speakText(getResources().getString(R.string.correct), TextToSpeech.QUEUE_FLUSH);
-            Toast.makeText(this, "Right Answer", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "Right Answer", Toast.LENGTH_SHORT).show();
             toneGen.startTone(ToneGenerator.TONE_CDMA_EMERGENCY_RINGBACK,200);
         } else {
             ph.takeHit();
             speakText(getResources().getString(R.string.wrong), TextToSpeech.QUEUE_FLUSH);
-            Toast.makeText(this, "Wrong Answer", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "Wrong Answer", Toast.LENGTH_SHORT).show();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 vibrator.vibrate(VibrationEffect.createOneShot(VIBRATE_TIME, VibrationEffect.DEFAULT_AMPLITUDE));
             }else{
@@ -462,9 +480,14 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
 
     @Override
     public void onLongPress() {
-        points.remove(points.size()-1);
-        timer.cancel();
-        fitAnswer();
+        try {
+            points.remove(points.size() - 1);
+            timer.cancel();
+            fitAnswer();
+        } catch (NullPointerException e){
+            Log.e("Timer", "Timer not running yet.",e);
+            points.clear();
+        }
     }
 
     @Override

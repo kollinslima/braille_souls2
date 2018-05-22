@@ -10,6 +10,7 @@ import android.os.Vibrator;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,11 +41,18 @@ public class LearnMode extends AppCompatActivity implements SensiveAreaListener 
 
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         toneGen = new ToneGenerator(AudioManager.STREAM_MUSIC, ToneGenerator.MAX_VOLUME);
-        Toast.makeText(this, getResources().getString(R.string.tts_learn_mode_instructions), Toast.LENGTH_SHORT).show();
-        speakText(getResources().getString(R.string.tts_learn_mode_instructions), TextToSpeech.QUEUE_FLUSH);
-        speakText(getResources().getString(R.string.tts_learn_mode_touch_instructions), TextToSpeech.QUEUE_ADD);
-        speakText(getResources().getString(R.string.tts_lets_begin), TextToSpeech.QUEUE_ADD);
-        setUpNextSymbol();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                speakText(getResources().getString(R.string.tts_learn_mode_instructions), TextToSpeech.QUEUE_FLUSH);
+                speakText(getResources().getString(R.string.tts_learn_mode_touch_instructions), TextToSpeech.QUEUE_ADD);
+                speakText(getResources().getString(R.string.tts_lets_begin), TextToSpeech.QUEUE_ADD);
+
+                setUpNextSymbol();
+            }
+        }).start();
+//        Toast.makeText(this, getResources().getString(R.string.tts_learn_mode_instructions), Toast.LENGTH_SHORT).show();
 
     }
 
@@ -56,9 +64,10 @@ public class LearnMode extends AppCompatActivity implements SensiveAreaListener 
             symbolIndex -= 1;
         }
 
-        text.setText(braille_database.get(symbolIndex).getText());
-        String aux = getResources().getString(R.string.tts_spell_a_symbol) + braille_database.get(symbolIndex).getText();
-        speakText(aux, TextToSpeech.QUEUE_ADD);
+        String symbol = braille_database.get(symbolIndex).getText();
+        text.setText(symbol);
+        speakText(getResources().getString(R.string.tts_spell_a_symbol), TextToSpeech.QUEUE_ADD);
+        speakText(symbol, TextToSpeech.QUEUE_ADD);
         touchView.cleanAllSensitive();
 
         int i,row,column;
@@ -106,6 +115,7 @@ public class LearnMode extends AppCompatActivity implements SensiveAreaListener 
     protected void onPause() {
         super.onPause();
         vibrator.cancel();
+        MainMenu.tts.stop();
     }
 
     @Override

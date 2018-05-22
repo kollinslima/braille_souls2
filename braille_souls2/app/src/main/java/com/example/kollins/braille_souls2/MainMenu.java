@@ -31,11 +31,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.example.kollins.braille_souls2.database.DBKey;
-import com.example.sumi.brailler.database.DataBaseHelper;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
-
-import org.w3c.dom.Text;
+import com.example.kollins.braille_souls2.database.DataBaseHelper;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -60,6 +56,12 @@ public class MainMenu extends AppCompatActivity implements TextToSpeech.OnInitLi
 
         loadDataBase();
         lastBtnTouched = "";
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MainMenu.tts.stop();
     }
 
     private void loadDataBase() {
@@ -106,6 +108,8 @@ public class MainMenu extends AppCompatActivity implements TextToSpeech.OnInitLi
             speakText(getResources().getString(R.string.tts_select_learn_mode), TextToSpeech.QUEUE_FLUSH);
             return;
         }else{
+            speakText(getResources().getString(R.string.tts_confirm_learn_mode), TextToSpeech.QUEUE_FLUSH);
+            while (tts.isSpeaking());
             Intent intent = new Intent(this, LearnMode.class);
             startActivity(intent);
         }
@@ -117,6 +121,8 @@ public class MainMenu extends AppCompatActivity implements TextToSpeech.OnInitLi
             lastBtnTouched = "practiceMode";
             speakText(getResources().getString(R.string.tts_select_practice_mode), TextToSpeech.QUEUE_FLUSH);
         }else{
+            speakText(getResources().getString(R.string.tts_confirm_practice_mode), TextToSpeech.QUEUE_FLUSH);
+            while (tts.isSpeaking());
             Intent intent = new Intent(this, PracticeMode.class);
             startActivity(intent);
         }
@@ -130,6 +136,7 @@ public class MainMenu extends AppCompatActivity implements TextToSpeech.OnInitLi
             return;
         }else{
             speakText(getResources().getString(R.string.tts_exiting_app), TextToSpeech.QUEUE_FLUSH);
+            while (tts.isSpeaking());
             finish();
         }
     }
