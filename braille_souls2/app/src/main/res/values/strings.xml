@@ -1,8 +1,5 @@
 <resources>
     <string name="app_name">Braille Souls 2 - AE</string>
-    <string name="aprender">Aprender</string>
-    <string name="praticar">Praticar</string>
-    <string name="sair">Sair</string>
     <string name="main_menu_learn">Learn</string>
     <string name="main_menu_practice">Practice</string>
     <string name="main_menu_exit">Exit</string>
@@ -13,8 +10,14 @@
     <string name="tts_select_practice_mode">Practice mode selected</string>
     <string name="tts_main_menu_button_layout">There are three buttons on this screen, the upper half is the learn button, the lower left fourth is the practice button and the lower right fourth is the exit button</string>
     <string name="tts_wellcome_message">Wellcome to braille souls accessible edition</string>
-    <string name="tts_learn_mode_instructions">Drag you finger through the screen, when it beeps means you are at a braille dot, if it also vibrate it means that the dot is active</string>
+    <string name="tts_learn_mode_instructions">Drag your finger through the screen, when it beeps means you are at a braille dot, if it also vibrate it means that the dot is active</string>
     <string name="tts_spell_a_symbol">Thats the braille for: </string>
     <string name="tts_learn_mode_touch_instructions">Double tap to go forward, long press to go backward, tap with two fingers to go back to the menu</string>
     <string name="tts_lets_begin">Let\'s begin:</string>
+    <string name="practice_mode_instructions">There will be several characters that you need to give the braille code, touch where there are active dots</string>
+    <string name="practice_mode_touch_instructions">Tap the dots as the code of the character, touch with two fingers to go back to the menu</string>
+    <string name="practice_mode_time_alert">You have:</string>
+    <string name="practice_mode_time_alert_sec">, seconds</string>
+    <string name="correct">Correct</string>
+    <string name="wrong">Wrong</string>
 </resources>

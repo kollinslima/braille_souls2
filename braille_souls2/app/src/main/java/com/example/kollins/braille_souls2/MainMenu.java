@@ -136,9 +136,12 @@ public class MainMenu extends AppCompatActivity implements TextToSpeech.OnInitLi
     @Override
     public void onInit(int status) {
         if(status == TextToSpeech.SUCCESS){
-            int result = tts.setLanguage(Locale.US);
+            int result = tts.setLanguage(Locale.getDefault());
             if(result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED){
-                Log.e("Log", "TTS - Language not supported");
+                Log.e("Log", "TTS - Language not supported - Using US");
+                tts.setLanguage(Locale.US);
+                tts.speak(getResources().getString(R.string.tts_wellcome_message), TextToSpeech.QUEUE_FLUSH, null);
+                tts.speak(getResources().getString(R.string.tts_main_menu_button_layout), TextToSpeech.QUEUE_ADD, null);
             }else{
                 Log.e("Log", "TTS - Initialize succeeded");
                 tts.speak(getResources().getString(R.string.tts_wellcome_message), TextToSpeech.QUEUE_FLUSH, null);
@@ -155,5 +158,6 @@ public class MainMenu extends AppCompatActivity implements TextToSpeech.OnInitLi
         Log.e("Log", "APP - Resumed to main menu");
         super.onResume();
     }
+
 
 }
