@@ -103,7 +103,7 @@ public class MainMenu extends AppCompatActivity implements TextToSpeech.OnInitLi
         Log.e("Log", "APP - Learn button selected");
         if(lastBtnTouched != "learnMode"){
             lastBtnTouched = "learnMode";
-            tts.speak(getResources().getString(R.string.tts_select_learn_mode), TextToSpeech.QUEUE_FLUSH, null);
+            speakText(getResources().getString(R.string.tts_select_learn_mode), TextToSpeech.QUEUE_FLUSH);
             return;
         }else{
             Intent intent = new Intent(this, LearnMode.class);
@@ -115,7 +115,7 @@ public class MainMenu extends AppCompatActivity implements TextToSpeech.OnInitLi
         Log.e("Log", "APP - Practice button selected");
         if(lastBtnTouched != "practiceMode"){
             lastBtnTouched = "practiceMode";
-            tts.speak(getResources().getString(R.string.tts_select_practice_mode), TextToSpeech.QUEUE_FLUSH, null);
+            speakText(getResources().getString(R.string.tts_select_practice_mode), TextToSpeech.QUEUE_FLUSH);
         }else{
             Intent intent = new Intent(this, PracticeMode.class);
             startActivity(intent);
@@ -126,10 +126,10 @@ public class MainMenu extends AppCompatActivity implements TextToSpeech.OnInitLi
         Log.e("Log", "APP - Exit button selected");
         if(lastBtnTouched != "exitBtn"){
             lastBtnTouched = "exitBtn";
-            tts.speak(getResources().getString(R.string.tts_select_exit), TextToSpeech.QUEUE_FLUSH, null);
+            speakText(getResources().getString(R.string.tts_select_exit), TextToSpeech.QUEUE_FLUSH);
             return;
         }else{
-            tts.speak(getResources().getString(R.string.tts_exiting_app), TextToSpeech.QUEUE_FLUSH, null);
+            speakText(getResources().getString(R.string.tts_exiting_app), TextToSpeech.QUEUE_FLUSH);
             finish();
         }
     }
@@ -141,12 +141,12 @@ public class MainMenu extends AppCompatActivity implements TextToSpeech.OnInitLi
             if(result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED){
                 Log.e("Log", "TTS - Language not supported - Using US");
                 tts.setLanguage(Locale.US);
-                tts.speak(getResources().getString(R.string.tts_wellcome_message), TextToSpeech.QUEUE_FLUSH, null);
-                tts.speak(getResources().getString(R.string.tts_main_menu_button_layout), TextToSpeech.QUEUE_ADD, null);
+                speakText(getResources().getString(R.string.tts_wellcome_message), TextToSpeech.QUEUE_FLUSH);
+                speakText(getResources().getString(R.string.tts_main_menu_button_layout), TextToSpeech.QUEUE_ADD);
             }else{
                 Log.e("Log", "TTS - Initialize succeeded");
-                tts.speak(getResources().getString(R.string.tts_wellcome_message), TextToSpeech.QUEUE_FLUSH, null);
-                tts.speak(getResources().getString(R.string.tts_main_menu_button_layout), TextToSpeech.QUEUE_ADD, null);
+                speakText(getResources().getString(R.string.tts_wellcome_message), TextToSpeech.QUEUE_FLUSH);
+                speakText(getResources().getString(R.string.tts_main_menu_button_layout), TextToSpeech.QUEUE_ADD);
             }
         }
 
@@ -155,7 +155,7 @@ public class MainMenu extends AppCompatActivity implements TextToSpeech.OnInitLi
     @Override
     public void onResume() {
         lastBtnTouched = "";
-        tts.speak(getResources().getString(R.string.tts_main_menu_button_layout), TextToSpeech.QUEUE_FLUSH, null);
+        speakText(getResources().getString(R.string.tts_main_menu_button_layout), TextToSpeech.QUEUE_FLUSH);
         Log.e("Log", "APP - Resumed to main menu");
         super.onResume();
     }
@@ -163,9 +163,9 @@ public class MainMenu extends AppCompatActivity implements TextToSpeech.OnInitLi
 
     public static void speakText(String text, int mode){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            MainMenu.tts.speak(text, TextToSpeech.QUEUE_ADD, null,null);
+            MainMenu.tts.speak(text, mode, null,null);
         } else {
-            MainMenu.tts.speak(text, TextToSpeech.QUEUE_ADD, null);
+            MainMenu.tts.speak(text, mode, null);
         }
     }
 }

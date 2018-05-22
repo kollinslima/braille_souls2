@@ -17,6 +17,7 @@ import com.example.kollins.braille_souls2.custom_view.SensiveAreaListener;
 import com.example.kollins.braille_souls2.custom_view.TouchScreenView;
 
 import static com.example.kollins.braille_souls2.MainMenu.braille_database;
+import static com.example.kollins.braille_souls2.MainMenu.speakText;
 
 public class LearnMode extends AppCompatActivity implements SensiveAreaListener {
 
@@ -40,9 +41,9 @@ public class LearnMode extends AppCompatActivity implements SensiveAreaListener 
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         toneGen = new ToneGenerator(AudioManager.STREAM_MUSIC, ToneGenerator.MAX_VOLUME);
         Toast.makeText(this, getResources().getString(R.string.tts_learn_mode_instructions), Toast.LENGTH_SHORT).show();
-        MainMenu.tts.speak(getResources().getString(R.string.tts_learn_mode_instructions), TextToSpeech.QUEUE_FLUSH, null);
-        MainMenu.tts.speak(getResources().getString(R.string.tts_learn_mode_touch_instructions), TextToSpeech.QUEUE_ADD, null);
-        MainMenu.tts.speak(getResources().getString(R.string.tts_lets_begin), TextToSpeech.QUEUE_ADD, null);
+        speakText(getResources().getString(R.string.tts_learn_mode_instructions), TextToSpeech.QUEUE_FLUSH);
+        speakText(getResources().getString(R.string.tts_learn_mode_touch_instructions), TextToSpeech.QUEUE_ADD);
+        speakText(getResources().getString(R.string.tts_lets_begin), TextToSpeech.QUEUE_ADD);
         setUpNextSymbol();
 
     }
@@ -57,7 +58,7 @@ public class LearnMode extends AppCompatActivity implements SensiveAreaListener 
 
         text.setText(braille_database.get(symbolIndex).getText());
         String aux = getResources().getString(R.string.tts_spell_a_symbol) + braille_database.get(symbolIndex).getText();
-        MainMenu.tts.speak(aux, TextToSpeech.QUEUE_ADD, null);
+        speakText(aux, TextToSpeech.QUEUE_ADD);
         touchView.cleanAllSensitive();
 
         int i,row,column;
@@ -83,7 +84,7 @@ public class LearnMode extends AppCompatActivity implements SensiveAreaListener 
 
         text.setText(braille_database.get(symbolIndex).getText());
         String aux = getResources().getString(R.string.tts_spell_a_symbol) + braille_database.get(symbolIndex).getText();
-        MainMenu.tts.speak(aux, TextToSpeech.QUEUE_ADD, null);
+        speakText(aux, TextToSpeech.QUEUE_ADD);
 
         touchView.cleanAllSensitive();
 

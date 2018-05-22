@@ -29,6 +29,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import static com.example.kollins.braille_souls2.MainMenu.braille_database;
+import static com.example.kollins.braille_souls2.MainMenu.speakText;
 
 public class PracticeMode extends AppCompatActivity implements SensiveAreaListener {
 
@@ -93,7 +94,7 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
     }
 
     public void timeAlert(int timeAnswer) {
-        MainMenu.tts.speak(getResources().getString(R.string.practice_mode_time_alert) + timeAnswer/1000 + getResources().getString(R.string.practice_mode_time_alert_sec), TextToSpeech.QUEUE_ADD, null);
+        speakText(getResources().getString(R.string.practice_mode_time_alert) + timeAnswer/1000 + getResources().getString(R.string.practice_mode_time_alert_sec), TextToSpeech.QUEUE_ADD);
     }
 
     @Override
@@ -103,8 +104,8 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
         new Thread(new Runnable() {
             @Override
             public void run() {
-                MainMenu.speakText(getResources().getString(R.string.practice_mode_instructions), TextToSpeech.QUEUE_FLUSH);
-                MainMenu.speakText(getResources().getString(R.string.practice_mode_touch_instructions), TextToSpeech.QUEUE_ADD);
+                speakText(getResources().getString(R.string.practice_mode_instructions), TextToSpeech.QUEUE_FLUSH);
+                speakText(getResources().getString(R.string.practice_mode_touch_instructions), TextToSpeech.QUEUE_ADD);
                 timeAlert(TIME_ANSWER);
 
                 setUpRandomSymbol();
@@ -124,7 +125,7 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
         String symbol = braille_database.get(symbolIndex).getText();
         text.setText(symbol);
 
-        MainMenu.tts.speak(symbol, TextToSpeech.QUEUE_ADD, null);
+        speakText(symbol, TextToSpeech.QUEUE_ADD);
         timer = new Timer();
 
         //Just waiting
@@ -353,12 +354,12 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
 
         if (isRight && (auxNumDots == numDots)) {
             ph.addHit();
-            MainMenu.tts.speak(getResources().getString(R.string.correct), TextToSpeech.QUEUE_FLUSH, null);
+            speakText(getResources().getString(R.string.correct), TextToSpeech.QUEUE_FLUSH);
             Toast.makeText(this, "Right Answer", Toast.LENGTH_SHORT).show();
             toneGen.startTone(ToneGenerator.TONE_CDMA_EMERGENCY_RINGBACK,200);
         } else {
             ph.takeHit();
-            MainMenu.tts.speak(getResources().getString(R.string.wrong), TextToSpeech.QUEUE_FLUSH, null);
+            speakText(getResources().getString(R.string.wrong), TextToSpeech.QUEUE_FLUSH);
             Toast.makeText(this, "Wrong Answer", Toast.LENGTH_SHORT).show();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 vibrator.vibrate(VibrationEffect.createOneShot(VIBRATE_TIME, VibrationEffect.DEFAULT_AMPLITUDE));
