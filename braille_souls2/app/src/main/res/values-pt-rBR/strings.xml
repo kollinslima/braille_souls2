@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Braille Souls 2 - AE</string>
+    <string name="main_menu_learn">Aprender</string>
+    <string name="main_menu_practice">Praticar</string>
+    <string name="main_menu_exit">Sair</string>
+    <string name="tts_pausing_app">Pausando braille souls</string>
+    <string name="tts_select_learn_mode">Aprendizado selecionado</string>
+    <string name="tts_select_exit">Saída selecionada</string>
+    <string name="tts_exiting_app">Saindo do Braille Souls</string>
+    <string name="tts_select_practice_mode">Prática selecionada</string>
+    <string name="tts_main_menu_button_layout">Aqui há três botões na tela, na metade superior está o botão de aprendizado, no quarto inferior esquerdo está o botão de prática e no quarto inferior direito está o botão de sair</string>
+    <string name="tts_wellcome_message">Bem-vindo à versão acessível do Braille Souls</string>
+    <string name="tts_learn_mode_instructions">Arraste seu dedo pela tela, quando ouvir um bip significa que você está sobre um ponto de braille, se também vibrar significa que o ponto está ativo</string>
+    <string name="tts_spell_a_symbol">Este é o braille para: </string>
+    <string name="tts_learn_mode_touch_instructions">Toque duplo para avançar, toque longo para voltar, toque com dois dedos para voltar ao menu</string>
+    <string name="tts_lets_begin">Vamos começar:</string>
+    <string name="practice_mode_instructions">Haverão vários caractéres que você precisará colocar os códigos, toque onde achar que há pontos de braille ativos</string>
+    <string name="practice_mode_touch_instructions">Toque os pontos do código como o do caratére, toque com dois dedos para voltar ao menu</string>
+</resources>

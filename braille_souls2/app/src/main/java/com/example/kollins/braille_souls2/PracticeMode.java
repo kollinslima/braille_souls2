@@ -53,7 +53,7 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
     private static double SIN_75 = Math.sin(Math.toRadians(75));
 
     private final long VIBRATE_TIME = 500; //ms
-    private static int TIME_ANSWER = 5000;//ms
+    private static int TIME_ANSWER = 12000;//ms
     private Timer timer;
 
     private Handler handler;

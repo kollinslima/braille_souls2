@@ -11,6 +11,7 @@ import android.speech.tts.TextToSpeech;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.kollins.braille_souls2.custom_view.SensiveAreaListener;
 import com.example.kollins.braille_souls2.custom_view.TouchScreenView;
@@ -25,10 +26,12 @@ public class LearnMode extends AppCompatActivity implements SensiveAreaListener 
     private Vibrator vibrator;
     private long[] pattern = {0, 100};
     private ToneGenerator toneGen;
+    private TextToSpeech tts;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        tts = new TextToSpeech(this, );
         setContentView(R.layout.activity_text_and_touch);
 
         text = (TextView) findViewById(R.id.text);
@@ -38,7 +41,8 @@ public class LearnMode extends AppCompatActivity implements SensiveAreaListener 
 
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         toneGen = new ToneGenerator(AudioManager.STREAM_MUSIC, ToneGenerator.MAX_VOLUME);
-        MainMenu.tts.speak(getResources().getString(R.string.tts_learn_mode_instructions), TextToSpeech.QUEUE_ADD, null);
+        Toast.makeText(this, getResources().getString(R.string.tts_learn_mode_instructions), Toast.LENGTH_SHORT).show();
+        tts.speak(getResources().getString(R.string.tts_learn_mode_instructions), TextToSpeech.QUEUE_FLUSH, null);
         MainMenu.tts.speak(getResources().getString(R.string.tts_learn_mode_touch_instructions), TextToSpeech.QUEUE_ADD, null);
         MainMenu.tts.speak(getResources().getString(R.string.tts_lets_begin), TextToSpeech.QUEUE_ADD, null);
         setUpNextSymbol();
