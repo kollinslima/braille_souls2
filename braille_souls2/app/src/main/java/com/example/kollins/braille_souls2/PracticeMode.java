@@ -90,11 +90,6 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
 
         ph = new ProgressHandler();
 
-
-        MainMenu.tts.speak(getResources().getString(R.string.practice_mode_instructions), TextToSpeech.QUEUE_FLUSH, null);
-        MainMenu.tts.speak(getResources().getString(R.string.practice_mode_touch_instructions), TextToSpeech.QUEUE_ADD, null);
-        timeAlert(TIME_ANSWER);
-
     }
 
     public void timeAlert(int timeAnswer) {
@@ -104,7 +99,17 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
     @Override
     protected void onResume() {
         super.onResume();
-        setUpRandomSymbol();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                MainMenu.speakText(getResources().getString(R.string.practice_mode_instructions), TextToSpeech.QUEUE_FLUSH);
+                MainMenu.speakText(getResources().getString(R.string.practice_mode_touch_instructions), TextToSpeech.QUEUE_ADD);
+                timeAlert(TIME_ANSWER);
+
+                setUpRandomSymbol();
+            }
+        }).start();
     }
 
     @Override
@@ -118,11 +123,15 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
 
         String symbol = braille_database.get(symbolIndex).getText();
         text.setText(symbol);
+
         MainMenu.tts.speak(symbol, TextToSpeech.QUEUE_ADD, null);
         timer = new Timer();
-        while(MainMenu.tts.isSpeaking()){
+
         //Just waiting
+        while(MainMenu.tts.isSpeaking()){
+            Log.d("Speak", "I'm waiting...");
         }
+
         timer.schedule(new TimerAnswer(), TIME_ANSWER, TIME_ANSWER);
     }
 

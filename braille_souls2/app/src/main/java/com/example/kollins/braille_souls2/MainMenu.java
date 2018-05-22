@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.os.TestLooperManager;
 import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
@@ -160,4 +161,11 @@ public class MainMenu extends AppCompatActivity implements TextToSpeech.OnInitLi
     }
 
 
+    public static void speakText(String text, int mode){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            MainMenu.tts.speak(text, TextToSpeech.QUEUE_ADD, null,null);
+        } else {
+            MainMenu.tts.speak(text, TextToSpeech.QUEUE_ADD, null);
+        }
+    }
 }
