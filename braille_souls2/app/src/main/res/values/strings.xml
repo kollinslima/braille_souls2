@@ -19,7 +19,7 @@
     <string name="practice_mode_instructions">Touch anywhere in the screen creating the braille pattern of the symbol.</string>
     <string name="practice_mode_touch_instructions">Long press to confirm. Tap with two fingers to go back to the main menu.</string>
     <string name="practice_mode_time_alert">You have:</string>
-    <string name="practice_mode_time_alert_sec">, seconds</string>
+    <string name="practice_mode_time_alert_sec">, seconds. Let\'s begin.</string>
     <string name="correct">Correct</string>
     <string name="wrong">Wrong</string>
 </resources>

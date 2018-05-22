@@ -20,7 +20,7 @@
     <string name="practice_mode_instructions">Toque em qualquer lugar da tela, de modo a criar o padrão braille do caracter.</string>
     <string name="practice_mode_touch_instructions">Toque longo confirma a resposta. Toque com dois dedos para voltar ao menu principal</string>
     <string name="practice_mode_time_alert">Você tem:</string>
-    <string name="practice_mode_time_alert_sec">, segundos</string>
+    <string name="practice_mode_time_alert_sec">, segundos. Vamos começar.</string>
     <string name="correct">Correto</string>
     <string name="wrong">Errado</string>
 </resources>

@@ -46,7 +46,9 @@ public class LearnMode extends AppCompatActivity implements SensiveAreaListener 
             @Override
             public void run() {
                 speakText(getResources().getString(R.string.tts_learn_mode_instructions), TextToSpeech.QUEUE_FLUSH);
+                MainMenu.tts.playSilentUtterance(500, TextToSpeech.QUEUE_ADD, null);
                 speakText(getResources().getString(R.string.tts_learn_mode_touch_instructions), TextToSpeech.QUEUE_ADD);
+                MainMenu.tts.playSilentUtterance(500, TextToSpeech.QUEUE_ADD, null);
                 speakText(getResources().getString(R.string.tts_lets_begin), TextToSpeech.QUEUE_ADD);
 
                 setUpNextSymbol();

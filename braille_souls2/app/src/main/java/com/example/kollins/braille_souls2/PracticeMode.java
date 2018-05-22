@@ -106,8 +106,11 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
             @Override
             public void run() {
                 speakText(getResources().getString(R.string.practice_mode_instructions), TextToSpeech.QUEUE_FLUSH);
+                MainMenu.tts.playSilentUtterance(500, TextToSpeech.QUEUE_ADD, null);
                 speakText(getResources().getString(R.string.practice_mode_touch_instructions), TextToSpeech.QUEUE_ADD);
+                MainMenu.tts.playSilentUtterance(500, TextToSpeech.QUEUE_ADD, null);
                 timeAlert(TIME_ANSWER);
+                MainMenu.tts.playSilentUtterance(500, TextToSpeech.QUEUE_ADD, null);
 
                 setUpRandomSymbol();
             }
