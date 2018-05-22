@@ -17,4 +17,6 @@
     <string name="tts_spell_a_symbol">Thats the braille for: </string>
     <string name="tts_learn_mode_touch_instructions">Double tap to go forward, long press to go backward, tap with two fingers to go back to the menu</string>
     <string name="tts_lets_begin">Let\'s begin:</string>
+    <string name="practice_mode_instructions">There will be several characters that you need to give the braille code, touch where there are active dots</string>
+    <string name="practice_mode_touch_instructions">Tap the dots as the code of the character, touch with two fingers to go back to the menu</string>
 </resources>

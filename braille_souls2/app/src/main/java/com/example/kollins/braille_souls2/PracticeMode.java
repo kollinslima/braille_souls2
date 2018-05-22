@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.speech.tts.TextToSpeech;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -68,6 +69,8 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
 
     private ToneGenerator toneGen;
 
+    private int hitCounter;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,6 +88,11 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
 
         points = new ArrayList<>();
         braille_matrix = new int[3][2];
+
+        hitCounter = 0;
+
+        MainMenu.tts.speak(getResources().getString(R.string.practice_mode_instructions), TextToSpeech.QUEUE_FLUSH, null);
+        MainMenu.tts.speak(getResources().getString(R.string.practice_mode_touch_instructions), TextToSpeech.QUEUE_ADD, null);
     }
 
     @Override
