@@ -46,7 +46,7 @@ public class MainMenu extends AppCompatActivity implements TextToSpeech.OnInitLi
 
     public static final String DATABASE_TAG = "DatabaseTest";
     public static final ArrayList<DBKey> braille_database = new ArrayList<>();
-    public TextToSpeech tts;
+    public static TextToSpeech tts;
     private String lastBtnTouched;
 
 
@@ -138,7 +138,10 @@ public class MainMenu extends AppCompatActivity implements TextToSpeech.OnInitLi
         if(status == TextToSpeech.SUCCESS){
             int result = tts.setLanguage(Locale.getDefault());
             if(result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED){
-                Log.e("Log", "TTS - Language not supported");
+                Log.e("Log", "TTS - Language not supported - Using US");
+                tts.setLanguage(Locale.US);
+                tts.speak(getResources().getString(R.string.tts_wellcome_message), TextToSpeech.QUEUE_FLUSH, null);
+                tts.speak(getResources().getString(R.string.tts_main_menu_button_layout), TextToSpeech.QUEUE_ADD, null);
             }else{
                 Log.e("Log", "TTS - Initialize succeeded");
                 tts.speak(getResources().getString(R.string.tts_wellcome_message), TextToSpeech.QUEUE_FLUSH, null);
@@ -156,10 +159,5 @@ public class MainMenu extends AppCompatActivity implements TextToSpeech.OnInitLi
         super.onResume();
     }
 
-    @Override
-    public void onPause() {
-        tts.shutdown();
-        super.onPause();
-    }
 
 }

@@ -53,7 +53,7 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
     private static double SIN_75 = Math.sin(Math.toRadians(75));
 
     private final long VIBRATE_TIME = 500; //ms
-    private static int TIME_ANSWER = 12000;//ms
+    private int TIME_ANSWER = 10000;//ms
     private Timer timer;
 
     private Handler handler;
@@ -68,8 +68,7 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
     private Vibrator vibrator;
 
     private ToneGenerator toneGen;
-
-    private int hitCounter;
+    private ProgressHandler ph;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -89,10 +88,17 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
         points = new ArrayList<>();
         braille_matrix = new int[3][2];
 
-        hitCounter = 0;
+        ph = new ProgressHandler();
+
 
         MainMenu.tts.speak(getResources().getString(R.string.practice_mode_instructions), TextToSpeech.QUEUE_FLUSH, null);
         MainMenu.tts.speak(getResources().getString(R.string.practice_mode_touch_instructions), TextToSpeech.QUEUE_ADD, null);
+        timeAlert(TIME_ANSWER);
+
+    }
+
+    public void timeAlert(int timeAnswer) {
+        MainMenu.tts.speak(getResources().getString(R.string.practice_mode_time_alert) + timeAnswer/1000 + getResources().getString(R.string.practice_mode_time_alert_sec), TextToSpeech.QUEUE_ADD, null);
     }
 
     @Override
@@ -112,6 +118,10 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
 
         String symbol = braille_database.get(symbolIndex).getText();
         text.setText(symbol);
+        MainMenu.tts.speak(symbol, TextToSpeech.QUEUE_ADD, null);
+        while(MainMenu.tts.isSpeaking()){
+        //Just waiting
+        }
 
         timer = new Timer();
         timer.schedule(new TimerAnswer(), TIME_ANSWER, TIME_ANSWER);
@@ -334,9 +344,13 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
         Log.d("Convol", "End Convol");
 
         if (isRight && (auxNumDots == numDots)) {
+            ph.addHit();
+            MainMenu.tts.speak(getResources().getString(R.string.correct), TextToSpeech.QUEUE_FLUSH, null);
             Toast.makeText(this, "Right Answer", Toast.LENGTH_SHORT).show();
             toneGen.startTone(ToneGenerator.TONE_CDMA_EMERGENCY_RINGBACK,200);
         } else {
+            ph.takeHit();
+            MainMenu.tts.speak(getResources().getString(R.string.wrong), TextToSpeech.QUEUE_FLUSH, null);
             Toast.makeText(this, "Wrong Answer", Toast.LENGTH_SHORT).show();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 vibrator.vibrate(VibrationEffect.createOneShot(VIBRATE_TIME, VibrationEffect.DEFAULT_AMPLITUDE));

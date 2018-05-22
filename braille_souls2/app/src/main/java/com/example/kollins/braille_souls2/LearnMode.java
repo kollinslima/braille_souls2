@@ -26,12 +26,10 @@ public class LearnMode extends AppCompatActivity implements SensiveAreaListener 
     private Vibrator vibrator;
     private long[] pattern = {0, 100};
     private ToneGenerator toneGen;
-    private TextToSpeech tts;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        tts = new TextToSpeech(this, );
         setContentView(R.layout.activity_text_and_touch);
 
         text = (TextView) findViewById(R.id.text);
@@ -42,7 +40,7 @@ public class LearnMode extends AppCompatActivity implements SensiveAreaListener 
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         toneGen = new ToneGenerator(AudioManager.STREAM_MUSIC, ToneGenerator.MAX_VOLUME);
         Toast.makeText(this, getResources().getString(R.string.tts_learn_mode_instructions), Toast.LENGTH_SHORT).show();
-        tts.speak(getResources().getString(R.string.tts_learn_mode_instructions), TextToSpeech.QUEUE_FLUSH, null);
+        MainMenu.tts.speak(getResources().getString(R.string.tts_learn_mode_instructions), TextToSpeech.QUEUE_FLUSH, null);
         MainMenu.tts.speak(getResources().getString(R.string.tts_learn_mode_touch_instructions), TextToSpeech.QUEUE_ADD, null);
         MainMenu.tts.speak(getResources().getString(R.string.tts_lets_begin), TextToSpeech.QUEUE_ADD, null);
         setUpNextSymbol();
