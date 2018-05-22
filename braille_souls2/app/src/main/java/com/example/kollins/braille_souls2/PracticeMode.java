@@ -119,11 +119,10 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
         String symbol = braille_database.get(symbolIndex).getText();
         text.setText(symbol);
         MainMenu.tts.speak(symbol, TextToSpeech.QUEUE_ADD, null);
+        timer = new Timer();
         while(MainMenu.tts.isSpeaking()){
         //Just waiting
         }
-
-        timer = new Timer();
         timer.schedule(new TimerAnswer(), TIME_ANSWER, TIME_ANSWER);
     }
 

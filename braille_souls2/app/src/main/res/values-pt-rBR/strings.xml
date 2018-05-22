@@ -17,4 +17,8 @@
     <string name="tts_lets_begin">Vamos começar:</string>
     <string name="practice_mode_instructions">Haverão vários caractéres que você precisará colocar os códigos, toque onde achar que há pontos de braille ativos</string>
     <string name="practice_mode_touch_instructions">Toque os pontos do código como o do caratére, toque com dois dedos para voltar ao menu</string>
+    <string name="practice_mode_time_alert">Você tem:</string>
+    <string name="practice_mode_time_alert_sec">, segundos</string>
+    <string name="correct">Correto</string>
+    <string name="wrong">Errado</string>
 </resources>
