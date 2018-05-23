@@ -1,4 +1,4 @@
-# Braille Souls 2
+# Braille Souls 2 - AE
 
 An Android App developed to help people blind peope learn braille.
 
