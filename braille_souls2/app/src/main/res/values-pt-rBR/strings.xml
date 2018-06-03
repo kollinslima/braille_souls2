@@ -31,9 +31,16 @@
     <string name="tts_exiting_app">Saindo do Braille Souls</string>
     <string name="tts_main_menu_button_layout">Menu Principal. Na parte superior está o botão aprender, no canto inferior esquerdo está o botão praticar e no canto inferior direito está o botão Sair</string>
     <string name="tts_wellcome_message">Bem-vindo à versão acessível do Braille Souls</string>
-    <string name="tts_learn_mode_instructions">Arraste seu dedo pela tela para reconhecer o padrão braille do caracter. O bip indica a mudança de um ponto para outro. A vibração indica que o ponto selecionado pertence ao caracter atual.</string>
+
+    <string name="tts_learn_mode_instructions1">Arraste seu dedo pela tela para reconhecer o padrão braille do caracter.</string>
+    <string name="tts_learn_mode_instructions2">O bip indica a mudança de um ponto para outro.A vibração indica que o ponto selecionado pertence ao caracter atual.</string>
+
     <string name="tts_spell_a_symbol">Este é o braille para: </string>
-    <string name="tts_learn_mode_touch_instructions">Toque duplo avança o caracter. Toque longo volta para o caracter anterior. Toque com dois dedos para voltar ao menu principal</string>
+
+    <string name="tts_learn_mode_touch_instructions1">Toque duplo avança o caracter.</string>
+    <string name="tts_learn_mode_touch_instructions2">Toque longo volta para o caracter anterior.</string>
+    <string name="tts_learn_mode_touch_instructions3">Toque com dois dedos para voltar ao menu principal.</string>
+
     <string name="tts_lets_begin">Vamos começar:</string>
     <string name="practice_mode_instructions">Toque em qualquer lugar da tela, de modo a criar o padrão braille do caracter.</string>
     <string name="practice_mode_touch_instructions">Toque longo confirma a resposta. Toque com dois dedos para voltar ao menu principal</string>

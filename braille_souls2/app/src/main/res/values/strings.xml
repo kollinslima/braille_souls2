@@ -30,9 +30,16 @@
     <string name="tts_exiting_app">Exiting braille souls</string>
     <string name="tts_main_menu_button_layout">Main menu. Learn button is at the top of the screen. Practice button is lower right. Exit button is lower left.</string>
     <string name="tts_wellcome_message">Wellcome to braille souls accessible edition</string>
-    <string name="tts_learn_mode_instructions">Drag your finger through the screen to recognize the symbols pattern. A beep indicates that you have changed the braille dot. Vibration indicates that the dot belongs to the current symbol.</string>
+
+    <string name="tts_learn_mode_instructions1">Drag your finger through the screen to recognize the symbols pattern.</string>
+    <string name="tts_learn_mode_instructions2">A beep indicates that you have changed the braille dot. Vibration indicates that the dot belongs to the current symbol.</string>
+
     <string name="tts_spell_a_symbol">Thats the braille for: </string>
-    <string name="tts_learn_mode_touch_instructions">Double tap to go forward. Long press to go backward. Tap with two fingers to go back to the main menu.</string>
+
+    <string name="tts_learn_mode_touch_instructions1">Double tap to go forward.</string>
+    <string name="tts_learn_mode_touch_instructions2">Long press to go backward.</string>
+    <string name="tts_learn_mode_touch_instructions3">Tap with two fingers to go back to the main menu.</string>
+
     <string name="tts_lets_begin">Let\'s begin:</string>
     <string name="practice_mode_instructions">Touch anywhere in the screen creating the braille pattern of the symbol.</string>
     <string name="practice_mode_touch_instructions">Long press to confirm. Tap with two fingers to go back to the main menu.</string>

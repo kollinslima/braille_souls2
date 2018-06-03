@@ -20,9 +20,11 @@ package com.example.kollins.braille_souls2;
 
 import android.content.Context;
 import android.media.AudioManager;
+import android.media.MediaActionSound;
 import android.media.ToneGenerator;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.speech.tts.TextToSpeech;
@@ -35,8 +37,14 @@ import android.widget.Toast;
 import com.example.kollins.braille_souls2.custom_view.SensiveAreaListener;
 import com.example.kollins.braille_souls2.custom_view.TouchScreenView;
 
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
+
 import static com.example.kollins.braille_souls2.MainMenu.braille_database;
 import static com.example.kollins.braille_souls2.MainMenu.speakText;
+import static com.example.kollins.braille_souls2.MainMenu.user;
 
 public class LearnMode extends AppCompatActivity implements SensiveAreaListener {
 
@@ -46,6 +54,12 @@ public class LearnMode extends AppCompatActivity implements SensiveAreaListener 
     private Vibrator vibrator;
     private long[] pattern = {0, 100};
     private ToneGenerator toneGen;
+
+    private ReentrantLock lock;
+
+    private Timer mTimer;
+    private short timerCount;
+    public static final short INTERVAL_LEARN = 5; //s
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -60,72 +74,122 @@ public class LearnMode extends AppCompatActivity implements SensiveAreaListener 
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         toneGen = new ToneGenerator(AudioManager.STREAM_MUSIC, ToneGenerator.MAX_VOLUME);
 
+        lock = new ReentrantLock();
+
         new Thread(new Runnable() {
             @Override
             public void run() {
-                speakText(getResources().getString(R.string.tts_learn_mode_instructions), TextToSpeech.QUEUE_FLUSH);
-                MainMenu.tts.playSilentUtterance(500, TextToSpeech.QUEUE_ADD, null);
-                speakText(getResources().getString(R.string.tts_learn_mode_touch_instructions), TextToSpeech.QUEUE_ADD);
-                MainMenu.tts.playSilentUtterance(500, TextToSpeech.QUEUE_ADD, null);
-                speakText(getResources().getString(R.string.tts_lets_begin), TextToSpeech.QUEUE_ADD);
 
-                setUpNextSymbol();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setUpNextSymbol();
+                    }
+                });
+
+                if (!MainMenu.user.isTutorialEnd()) {
+                    while (!MainMenu.user.isFirstBeep()) {
+                        speakTutorial(getResources().getString(R.string.tts_learn_mode_instructions1), TextToSpeech.QUEUE_FLUSH);
+                    }
+                    while (!MainMenu.user.isFirstVibration()) {
+                        speakTutorial(getResources().getString(R.string.tts_learn_mode_instructions2), TextToSpeech.QUEUE_ADD);
+                    }
+                    while (!MainMenu.user.isFirstDoubleTap()) {
+                        speakTutorial(getResources().getString(R.string.tts_learn_mode_touch_instructions1), TextToSpeech.QUEUE_ADD);
+                    }
+                    while (!MainMenu.user.isFirstLongTap()) {
+                        speakTutorial(getResources().getString(R.string.tts_learn_mode_touch_instructions2), TextToSpeech.QUEUE_ADD);
+                    }
+                    while (!MainMenu.user.isFirstTwoFingers()) {
+                        speakTutorial(getResources().getString(R.string.tts_learn_mode_touch_instructions3), TextToSpeech.QUEUE_ADD);
+                    }
+                    speakText(getResources().getString(R.string.tts_lets_begin), TextToSpeech.QUEUE_ADD);
+                    MainMenu.user.setTutorialEnd(true);
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            setUpPreviousSymbol();  //Repeat A
+                        }
+                    });
+                }
             }
         }).start();
-//        Toast.makeText(this, getResources().getString(R.string.tts_learn_mode_instructions), Toast.LENGTH_SHORT).show();
 
     }
 
-    private void setUpNextSymbol(){
+    private void speakTutorial(String message, int type) {
+        speakText(message, type);
+        try {
+            mTimer = new Timer();
+            mTimer.scheduleAtFixedRate(new TimerTutorialLearn(), MainMenu.TIME_TUTORIAL, MainMenu.TIME_TUTORIAL);
+            synchronized (lock) {
+                lock.wait();
+            }
+            mTimer.cancel();
+            timerCount = 0;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void setUpNextSymbol() {
 
         symbolIndex += 1;
 
-        if (symbolIndex >= braille_database.size()){
+        if (symbolIndex >= braille_database.size()) {
             symbolIndex -= 1;
         }
 
         String symbol = braille_database.get(symbolIndex).getText();
         text.setText(symbol);
-        speakText(getResources().getString(R.string.tts_spell_a_symbol), TextToSpeech.QUEUE_ADD);
-        speakText(symbol, TextToSpeech.QUEUE_ADD);
+
+        if (MainMenu.user.isTutorialEnd()) {
+            speakText(getResources().getString(R.string.tts_spell_a_symbol), TextToSpeech.QUEUE_ADD);
+            speakText(symbol, TextToSpeech.QUEUE_ADD);
+        }
+
         touchView.cleanAllSensitive();
 
-        int i,row,column;
-        for (i = 0, row = 0, column = 0; i < braille_database.get(symbolIndex).getBraille().length(); i++){
+        int i, row, column;
+        for (i = 0, row = 0, column = 0; i < braille_database.get(symbolIndex).getBraille().length(); i++) {
 
             if (braille_database.get(symbolIndex).getBraille().charAt(i) == '1') {
                 touchView.setSensitive(row, column);
             }
 
-            column = (column + 1)%touchView.getColumns();
-            if (column == 0){
+            column = (column + 1) % touchView.getColumns();
+            if (column == 0) {
                 row += 1;
             }
         }
     }
 
-    private void setUpPreviousSymbol(){
+    private void setUpPreviousSymbol() {
 
         symbolIndex -= 1;
-        if (symbolIndex < 0){
+        if (symbolIndex < 0) {
             symbolIndex += 1;
         }
 
         text.setText(braille_database.get(symbolIndex).getText());
-        String aux = getResources().getString(R.string.tts_spell_a_symbol) + braille_database.get(symbolIndex).getText();
-        speakText(aux, TextToSpeech.QUEUE_ADD);
+
+        if (MainMenu.user.isTutorialEnd()) {
+            String aux = getResources().getString(R.string.tts_spell_a_symbol) + braille_database.get(symbolIndex).getText();
+            speakText(aux, TextToSpeech.QUEUE_ADD);
+        }
 
         touchView.cleanAllSensitive();
 
-        int i,row,column;
-        for (i = 0, row = 0, column = 0; i < braille_database.get(symbolIndex).getBraille().length(); i++){
+        int i, row, column;
+        for (i = 0, row = 0, column = 0; i < braille_database.get(symbolIndex).getBraille().length(); i++) {
 
             if (braille_database.get(symbolIndex).getBraille().charAt(i) == '1') {
                 touchView.setSensitive(row, column);
             }
 
-            column = (column + 1)%touchView.getColumns();
-            if (column == 0){
+            column = (column + 1) % touchView.getColumns();
+            if (column == 0) {
                 row += 1;
             }
         }
@@ -136,20 +200,33 @@ public class LearnMode extends AppCompatActivity implements SensiveAreaListener 
         super.onPause();
         vibrator.cancel();
         MainMenu.tts.stop();
+        MainMenu.user.saveData();
     }
 
     @Override
     public void onSensiveArea() {
+        if (!MainMenu.user.isFirstVibration()) {
+            synchronized (lock) {
+                lock.notify();
+            }
+        }
+        MainMenu.user.setFirstVibration(true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             vibrator.vibrate(VibrationEffect.createWaveform(pattern, 0));
-        }else{
-            vibrator.vibrate(pattern,0);
+        } else {
+            vibrator.vibrate(pattern, 0);
         }
     }
 
     @Override
     public void onChangeArea() {
-        toneGen.startTone(ToneGenerator.TONE_CDMA_PIP,100);
+        if (!MainMenu.user.isFirstBeep()) {
+            synchronized (lock) {
+                lock.notify();
+            }
+        }
+        MainMenu.user.setFirstBeep(true);
+        toneGen.startTone(ToneGenerator.TONE_CDMA_PIP, 100);
     }
 
     @Override
@@ -159,22 +236,60 @@ public class LearnMode extends AppCompatActivity implements SensiveAreaListener 
 
     @Override
     public void onDoubleTap() {
+        if (!MainMenu.user.isFirstDoubleTap()) {
+            synchronized (lock) {
+                lock.notify();
+            }
+        }
+        MainMenu.user.setFirstDoubleTap(true);
         setUpNextSymbol();
     }
 
     @Override
     public void onLongPress() {
+        if (MainMenu.user.isFirstDoubleTap()) {
+            if (!MainMenu.user.isFirstLongTap()) {
+                synchronized (lock) {
+                    lock.notify();
+                }
+            }
+            MainMenu.user.setFirstLongTap(true);
+        }
         setUpPreviousSymbol();
     }
 
     @Override
     public void onDoubleFingerTap() {
-        finish();
+        if (!MainMenu.user.isFirstTwoFingers()) {
+            synchronized (lock) {
+                lock.notify();
+            }
+            MainMenu.user.setFirstTwoFingers(true);
+        } else {
+            finish();
+        }
     }
 
     @Override
     public void onTap(float posX, float posY) {
 
+    }
+
+    public class TimerTutorialLearn extends TimerTask {
+
+        @Override
+        public void run() {
+            timerCount += 1;
+            if (MainMenu.tts.isSpeaking()) {
+                timerCount = 0;
+            } else if (timerCount == INTERVAL_LEARN) {
+                synchronized (lock) {
+                    lock.notify();
+                }
+
+                timerCount = 0;
+            }
+        }
     }
 
 }

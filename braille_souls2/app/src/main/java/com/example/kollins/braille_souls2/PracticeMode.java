@@ -46,6 +46,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static com.example.kollins.braille_souls2.MainMenu.braille_database;
 import static com.example.kollins.braille_souls2.MainMenu.speakText;
@@ -90,6 +91,12 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
     private ToneGenerator toneGen;
     private ProgressHandler ph;
 
+    private Timer mTimer;
+    private short timerCount;
+    public static final short INTERVAL_PRACTICE = 5; //s
+
+    private ReentrantLock lock;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,6 +108,8 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
         random = new Random();
 
         handler = new Handler(callback);
+
+        lock = new ReentrantLock();
 
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         toneGen = new ToneGenerator(AudioManager.STREAM_MUSIC, ToneGenerator.MAX_VOLUME);
@@ -135,6 +144,21 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
         }).start();
     }
 
+    private void speakTutorial(String message, int type) {
+        speakText(message, type);
+        try {
+            mTimer = new Timer();
+            mTimer.scheduleAtFixedRate(new TimerTutorialPractice(), MainMenu.TIME_TUTORIAL, MainMenu.TIME_TUTORIAL);
+            synchronized (lock) {
+                lock.wait();
+            }
+            mTimer.cancel();
+            timerCount = 0;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -155,7 +179,6 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
         } catch (NullPointerException e){
             Log.e("Timer", "Timer not running yet.",e);
         }
-        MainMenu.tts.stop();
     }
 
     private void setUpRandomSymbol() {
@@ -533,6 +556,23 @@ public class PracticeMode extends AppCompatActivity implements SensiveAreaListen
         public void run() {
             handler.sendEmptyMessage(0);
             timer.cancel();
+        }
+    }
+
+    public class TimerTutorialPractice extends TimerTask {
+
+        @Override
+        public void run() {
+            timerCount += 1;
+            if (MainMenu.tts.isSpeaking()) {
+                timerCount = 0;
+            } else if (timerCount == INTERVAL_PRACTICE) {
+                synchronized (lock) {
+                    lock.notify();
+                }
+
+                timerCount = 0;
+            }
         }
     }
 }
